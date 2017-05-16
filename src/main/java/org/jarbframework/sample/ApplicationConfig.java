@@ -15,7 +15,8 @@ import org.jarbframework.constraint.DatabaseConstraintsConfigurer;
 import org.jarbframework.constraint.EnableDatabaseConstraints;
 import org.jarbframework.constraint.metadata.BeanConstraintDescriptor;
 import org.jarbframework.constraint.metadata.enhance.AnnotationPropertyTypeEnhancer;
-import org.jarbframework.init.LocalHsqlDatabaseConfig;
+import org.jarbframework.init.LocalDatabaseConfig;
+import org.jarbframework.init.migrate.MigratingDatabaseBuilder;
 import org.jarbframework.init.populate.PopulatingApplicationListenerBuilder.DatabasePopulateAppender;
 import org.jarbframework.sample.populator.PostPopulator;
 import org.jarbframework.utils.orm.hibernate.ConventionImplicitNamingStrategy;
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Controller;
@@ -97,7 +99,15 @@ public class ApplicationConfig extends DatabaseConstraintsConfigurer {
     }
 
     @Configuration
-    public static class DatabaseConfig extends LocalHsqlDatabaseConfig {
+    public static class DatabaseConfig extends LocalDatabaseConfig {
+        
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void configure(MigratingDatabaseBuilder builder) {
+            builder.setType(EmbeddedDatabaseType.HSQL).setName("dev");
+        }
         
         /**
          * {@inheritDoc}
